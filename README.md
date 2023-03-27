@@ -21,8 +21,8 @@ CICD with Docker &amp; AWS
 5. Build & run the new docker image
 
 ### Prerequisites
-* EC2 Instance with ability to pull repository via SSH
-  * If HTTPS is preferred, repo will need to be cloned first
+* EC2 Instance with ability to pull repository
+  * Repo will need to be cloned first
 * Docker running on instance
 * Git installed on instance
 
