@@ -25,3 +25,7 @@ CICD with Docker &amp; AWS
   * If HTTPS is preferred, repo will need to be cloned first
 * Docker running on instance
 * Git installed on instance
+
+### Start-up Note
+* Comment lines 32-37 in didd.yml for first run
+  * Error will be thrown if previous image & container does not exist
