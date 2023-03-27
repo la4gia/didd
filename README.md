@@ -2,26 +2,26 @@
 Docker Integration & Docker Deployment
 
 ### Summary
-CICD with Docker &amp; AWS
+CICD with Docker
 
 ### Basic Actions' Secrets Requirements
-* SSH Key to access remote EC2 instance
-* EC2 Public IP or DNS info
-* EC2 Username info
+* SSH Key to access remote instance
+* Remote Host IP (or EC2 DNS info)
+* Remote Username 
 
 ### Recommended Actions' Secrets Requirements
 * Project Directory/Working Directory
 * Repo name
 
 ### Actions Runner Workflow
-1. Configure SSH to remote login to EC2 instance
+1. Configure SSH to remote login to remote instance
 2. Pull in the latest repo changes
 3. Stop and remove existing docker container
 4. Remove existing docker image
 5. Build & run the new docker image
 
 ### Prerequisites
-* EC2 Instance with ability to pull repository
+* Remote Instance with ability to pull repository
   * Repo will need to be cloned first
 * Docker running on instance
 * Git installed on instance
