@@ -29,13 +29,12 @@ jobs:
       - name: Pull Updated Code
         run: ssh didd 'cd ${{ secrets.PROJECT }}; git pull'
 
-# UNCOMMENT TO REMOVE CURRENT CONTAINER AND/OR IMAGE WITH EACH PUSH
-#      - name: Stop Running Container
-#        run: ssh didd 'docker container stop $(docker container ls -q)'
-#      - name: Prune Container(s)
-#        run: ssh didd 'docker container prune -f'
-#      - name: Remove Previous Docker Image
-#        run: ssh didd 'docker image rm -f $(docker images -q | head -n 1)'
+      - name: Stop Running Container
+        run: ssh didd 'docker container stop $(docker container ls -q)'
+      - name: Prune Container(s)
+        run: ssh didd 'docker container prune -f'
+      - name: Remove Previous Docker Image
+        run: ssh didd 'docker image rm -f $(docker images -q | head -n 1)'
 
       - name: Build Docker Image
         run: ssh didd 'docker build -t didd_test ${{ secrets.WORKING_DIR }}/.'

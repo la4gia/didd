@@ -1,5 +1,6 @@
 FROM alpine:latest
 
-WORKDIR /app
+USER non-root
+WORKDIR /home/non-root
 
 CMD sleep 1d
