@@ -24,12 +24,12 @@ jobs:
         env:
           SSH_USER: ${{ secrets.USERNAME }}
           SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SSH_HOST: ${{ secrets.HOST_DNS }}
+          SSH_HOST: ${{ secrets.HOST_IP }}
 
       - name: Pull Updated Code
-        run: ssh didd 'git pull ${{ secrets.REPO }}'
+        run: ssh didd 'cd ${{ secrets.PROJECT }}; git pull'
 
-# UNCOMMENT TO REMOVE WITH EACH PUSH
+# UNCOMMENT TO REMOVE CURRENT CONTAINER AND/OR IMAGE WITH EACH PUSH
 #      - name: Stop Running Container
 #        run: ssh didd 'docker container stop $(docker container ls -q)'
 #      - name: Prune Container(s)
