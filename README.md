@@ -11,6 +11,7 @@ CICD with Docker &amp; AWS
 
 ### Recommended Actions' Secrets Requirements
 * Root Directory/Working Directory
+* Repo name
 
 ### Actions Runner Workflow
 1. Configure SSH to remote login to EC2 instance
