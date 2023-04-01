@@ -15,13 +15,13 @@ for file in $(cat pull.log);
 for project in $(cat projects.log);
   do
     # STOP CONTAINER BY IMAGE NAME
-    docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1)
+    docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1);
     # REMOVE IMAGE
-    docker image rm $project -f
+    docker image rm $project -f;
     # BUILD NEW IMAGE
-    docker build -t $project $project/.
+    docker build -t $project $project/.;
     # RUN NEW CONTAINER
-    docker run -d $project
+    docker run -d $project;
   done
 
 # TIDY UP
