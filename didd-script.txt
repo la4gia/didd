@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# PULL IN LATEST CHANGES
+cd didd  # CHANGE TO REPO NAME
+git pull > pull.log
+cat pull.log | grep -v 'create' | grep -v 'delete' | grep -v 'github' | grep -o '\w.*/.*' | cut -d ' ' -f 1 > pull.log
+
+# STORE UPDATED PROJECTS
+for file in $(cat pull.log);
+  do
+    echo $file | cut -d / -f 1;
+  done > projects.log
+
+# DEPLOY LOOP
+for project in $(cat projects.log);
+  do
+    # STOP CONTAINER BY IMAGE NAME
+    docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1)
+    # REMOVE IMAGE
+    docker image rm $project -f
+    # BUILD NEW IMAGE
+    docker build -t $project $project/.
+    # RUN NEW CONTAINER
+    docker run -d $project
+  done
+
+# TIDY UP
+docker container prune -f
+rm projects.log
+rm pull.log

@@ -1,13 +1,15 @@
 name: DIDD
+
 on: push
+
 jobs:
 
   deploy:
-    name: "Deploy Docker Container"
+    name: "Docker Deploy"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Workspace
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure SSH
         run: |
@@ -26,17 +28,5 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_HOST: ${{ secrets.HOST_IP }}
 
-      - name: Pull Updated Code
-        run: ssh didd 'cd ${{ secrets.PROJECT }}; git pull'
-
-      - name: Stop Running Container
-        run: ssh didd 'docker container stop $(docker container ls -q)'
-      - name: Prune Container(s)
-        run: ssh didd 'docker container prune -f'
-      - name: Remove Previous Docker Image
-        run: ssh didd 'docker image rm -f $(docker images -q | head -n 1)'
-
-      - name: Build Docker Image
-        run: ssh didd 'docker build -t didd_test ${{ secrets.WORKING_DIR }}/.'
-      - name: Run Docker Container
-        run: ssh didd 'docker run -d didd_test'
+      - name: Run DIDD Script
+        run: ssh didd < didd-script.txt
