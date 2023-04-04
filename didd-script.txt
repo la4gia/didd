@@ -6,10 +6,7 @@ git pull > pull.log
 cat pull.log | grep -v 'create' | grep -v 'delete' | grep -v 'github' | grep -o '\w.*/.*' | cut -d ' ' -f 1 > pull.log
 
 # STORE UPDATED PROJECTS
-for file in $(cat pull.log);
-  do
-    echo $file | cut -d / -f 1;
-  done > projects.log
+cat pull.log | cut -d / -f 1 | sort -u > projects.log
 
 # DEPLOY LOOP
 for project in $(cat projects.log);
