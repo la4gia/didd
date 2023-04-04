@@ -13,7 +13,7 @@ CICD with Docker
 1. Configure SSH login to remote instance
 2. Pull in the latest repo changes
 3. Stop existing docker containers
-4. If Dockerfile was updated, remove & rebuild docker image
+4. If Dockerfile was added/updated, build/rebuild docker image
 5. Build new containers
 6. Clean up
 
