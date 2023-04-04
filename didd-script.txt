@@ -1,30 +1,44 @@
 #!/bin/bash
 
 # PULL IN LATEST CHANGES
-cd didd  # CHANGE TO REPO NAME
+cd sandbox
 git pull > pull.log
 cat pull.log | grep -v 'create' | grep -v 'delete' | grep -v 'github' | grep -o '\w.*/.*' | cut -d ' ' -f 1 > pull.log
 
 # STORE UPDATED PROJECTS
 cat pull.log | cut -d / -f 1 | sort -u > projects.log
 
+# STORE UPDATED IMAGES
+cat pull.log | grep Dockerfile | cut -d / -f 1 > images.log
+
 # DEPLOY LOOP
-for project in $(cat projects.log);
+for project in $(cat projects.log)
   do
     if docker images | grep $project -q  # CHECK IF IMAGE EXISTS
-        then
-            # STOP CONTAINER BY IMAGE NAME
-            docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1);
+      then
+        # STOP CONTAINER BY IMAGE NAME
+        docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1);
+      fi
+
+    # CHECK IF DOCKERFILE WAS UPDATED
+    # IF SO, REBUILD IMAGE
+    for image in $(cat images.log)
+      do
+        if [ $project == $image ]
+          then
             # REMOVE IMAGE
             docker image rm $project -f;
-        fi
-    # BUILD NEW IMAGE
-    docker build -t $project $project/.;
-    # RUN NEW CONTAINER
+            # BUILD NEW IMAGE
+            docker build -t $project $project/.;
+          fi
+      done
+
+    # BUILD NEW CONTAINER
     docker run -d $project;
   done
 
 # TIDY UP
 docker container prune -f
+rm images.log
 rm projects.log
 rm pull.log
