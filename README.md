@@ -10,7 +10,7 @@ CICD with Docker
 * Remote Username
 
 ### Actions Runner Workflow
-1. Configure SSH to remote login to remote instance
+1. Configure SSH to login to remote instance
 2. Pull in the latest repo changes
 3. Stop existing docker container
 4. Remove existing docker image
@@ -22,7 +22,9 @@ CICD with Docker
   * Repo will need to be cloned first
 * Docker running on instance
 * Git installed on instance
+* Dockerfile must be in project folder's root
 
-### Start-up Note
+### Note
 * This is designed to use the GitHub provided runner
   * If you prefer a self-hosted runner, move the ssh config info to the runner's host 
+* Images are tagged with the project folder's name
