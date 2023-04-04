@@ -14,10 +14,13 @@ for file in $(cat pull.log);
 # DEPLOY LOOP
 for project in $(cat projects.log);
   do
-    # STOP CONTAINER BY IMAGE NAME
-    docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1);
-    # REMOVE IMAGE
-    docker image rm $project -f;
+    if docker images | grep $project -q  # CHECK IF IMAGE EXISTS
+        then
+            # STOP CONTAINER BY IMAGE NAME
+            docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1);
+            # REMOVE IMAGE
+            docker image rm $project -f;
+        fi
     # BUILD NEW IMAGE
     docker build -t $project $project/.;
     # RUN NEW CONTAINER

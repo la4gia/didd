@@ -24,7 +24,5 @@ CICD with Docker
 * Git installed on instance
 
 ### Start-up Note
-* Comment lines 17-20,28 in didd-script for first run
-  * Error will be thrown if previous image & container does not exist
 * This is designed to use the GitHub provided runner
   * If you prefer a self-hosted runner, move the ssh config info to the runner's host 
