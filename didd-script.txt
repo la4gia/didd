@@ -2,14 +2,18 @@
 
 # PULL IN LATEST CHANGES
 cd didd
-git pull > pull.log
-cat pull.log | grep -v 'create' | grep -v 'delete' | grep -v 'github' | grep -o '\w.*/.*' | cut -d ' ' -f 1 > pull.log
+git pull > full.log
+cat full.log | grep -v 'create' | grep -v 'delete' | grep -v 'github' | grep -o '\w.*/.*' | cut -d ' ' -f 1 > pull.log
+cat full.log | grep delete | grep Dockerfile | cut -d ' ' -f 5 | cut -d / -f 1 > delete.log
 
 # STORE UPDATED PROJECTS
 cat pull.log | cut -d / -f 1 | sort -u > projects.log
 
-# STORE UPDATED IMAGES
+# STORE ALTERED IMAGES
 cat pull.log | grep Dockerfile | cut -d / -f 1 > images.log
+
+# STORE BUILD/REBUILD IMAGES
+diff images.log delete.log > build.log
 
 # DEPLOY LOOP
 for project in $(cat projects.log)
@@ -21,25 +25,31 @@ for project in $(cat projects.log)
         && docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1);
       fi
 
-    # CHECK IF DOCKERFILE WAS ADDED/UPDATED
-    # IF SO, BUILD/REBUILD IMAGE
+    # CHECK IF DOCKERFILE WAS UPDATED/DELETED
+    # IF SO, REMOVE IMAGE
     for image in $(cat images.log)
       do
         if [ $project == $image ]
           then
             # REMOVE IMAGE IF IT EXISTS
             docker images | grep $project -q && docker image rm $project -f;
+          fi
+      done
+
+    # BUILD/REBUILD NEW IMAGE
+    for image in $(cat build.log)
+      do
+        if [ $project == $image ]
+          then
             # BUILD NEW IMAGE
             docker build -t $project $project/.;
           fi
       done
 
-    # BUILD NEW CONTAINER
-    docker run -d $project;
+    # BUILD NEW CONTAINER IF IMAGE EXISTS
+    docker images | grep $project -q && docker run -d $project;
   done
 
 # TIDY UP
 docker container prune -f
-rm images.log
-rm projects.log
-rm pull.log
+rm *.log
