@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # PULL IN LATEST CHANGES
-cd sandbox
+cd didd
 git pull > pull.log
 cat pull.log | grep -v 'create' | grep -v 'delete' | grep -v 'github' | grep -o '\w.*/.*' | cut -d ' ' -f 1 > pull.log
 
@@ -12,12 +12,13 @@ cat pull.log | cut -d / -f 1 | sort -u > projects.log
 cat pull.log | grep Dockerfile | cut -d / -f 1 > images.log
 
 # DEPLOY LOOP
-for project in $(cat projects.log);
+for project in $(cat projects.log)
   do
     if docker images | grep $project -q  # CHECK IF IMAGE EXISTS
       then
         # STOP CONTAINER BY IMAGE NAME
-        docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1);
+        docker container ls | grep $project -q \
+        && docker container stop $(docker container ls --format "table {{.ID}} {{.Image}}" | grep $project | cut -d ' ' -f 1);
       fi
 
     # CHECK IF DOCKERFILE WAS ADDED/UPDATED
