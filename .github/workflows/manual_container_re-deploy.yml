@@ -1,0 +1,46 @@
+# MANUAL RE-DEPLOY OF ALL RUNNING CONTAINERS
+name: RE-DEPLOY CONTAINERS
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  container_deploy:
+    name: "Containers Deploy"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/didd.key
+          chmod 600 ~/.ssh/didd.key
+          cat >>~/.ssh/config <<END
+          Host didd
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/didd.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.USERNAME }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.HOST_IP }}
+
+      - name: Retrieve Info
+        run: | 
+          ssh didd "docker container ls --format 'table {{.ID}}{{ .Image }}' | tail -n +2 > containers.log"
+          scp didd:containers.log .
+
+      - name: Rebuild Containers
+        run: | 
+          for container in $(cat containers.log) 
+            do 
+              ssh didd "docker container stop $(echo $container | cut -c -12); docker run -d $(echo $container | cut -c 13-)";
+            done
+
+      - name: Tidy Up
+        run: |
+          ssh didd "rm *.log; docker container prune -f"
+          rm *.log

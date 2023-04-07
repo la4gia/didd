@@ -30,3 +30,4 @@ CICD with Docker via SSH
   * If you prefer a self-hosted runner, move the ssh config info to the runner's host 
 * Images are tagged with the project folder's name
 * If the Dockerfile is removed, the associated image will be removed
+* Included a workflow to manually re-deploy all running containers
